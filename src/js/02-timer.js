@@ -1,17 +1,8 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 
-const options = {
-  enableTime: true,
-  time_24hr: true,
-  defaultDate: new Date(),
-  minuteIncrement: 1,
-  onClose(selectedDates) {
-    console.log(selectedDates[0]);
-  },
-};
-
 const refs = {
+  onInput : document.querySelector('input'),
   dayTime: document.querySelector('.value[data-days]'),
   hourTime: document.querySelector('.value[data-hours]'),
   minTime: document.querySelector('.value[data-minutes]'),
@@ -20,30 +11,21 @@ const refs = {
   stopBtn: document.querySelector('button[data-stop]'),
 }; 
 
-const timer = {
-  intervalId : null,
-  isActive: false,
-  start() {
-    if (this.isActive) {
-      return
+refs.startBtn.setAttribute('disabled', '');
+
+const options = {
+  enableTime: true,
+  time_24hr: true,
+  defaultDate: new Date(),
+  minuteIncrement: 1,
+  onClose(selectedDates) {
+    console.log(selectedDates[0]);
+    if (Date.parse(selectedDates) >= Date.now()) {
+      refs.startBtn.removeAttribute('disabled');
     }
-    const startTime = Date.now();
-    this.isActive = true;
-
-    this.intervalId = setInterval(() => {
-      const currentTime = Date.now();
-      const deltaTime = currentTime - startTime;
-      const time = convertMs(deltaTime);
-      
-      updatetime(time);
-
-    }, 1000);
   },
-  stop() {
-    clearInterval(this.intervalId);
-    this.isActive = false;
-  }
 };
+
 
 refs.startBtn.addEventListener('click', () => { 
   timer.start();
@@ -54,6 +36,42 @@ refs.stopBtn.addEventListener('click', () => {
 });
 
 flatpickr("#datetime-picker", options);
+
+const timer = {
+  intervaId: null,
+  isActive: false,
+  start() {
+    if (this.isActive) {
+      return
+    }
+    const selectedDate = new Date(refs.onInput.value).getTime();
+    console.log(selectedDate);
+
+    if (selectedDate < Date.now()) {
+      window.alert("Please choose a date in the future");
+      console.log(selectedDate);
+    }
+    
+    this.intervalId = setInterval(() => {
+      const endTime = Date.now();
+      const deltaTime = selectedDate - endTime;
+      const time = convertMs(deltaTime);
+
+
+      if (deltaTime <= 0) {
+        clearInterval(this.intervalId);
+        return
+      }
+
+      updatetime(time);
+      
+    }, 1000);
+  },
+  stop() {
+    clearInterval(this.intervalId);
+    this.isActive = false;
+  },
+};
 
 function updatetime({ days, hours, minutes, seconds }) {
   refs.dayTime.textContent = days;
@@ -74,16 +92,12 @@ function convertMs(ms) {
   const day = hour * 24;
 
   // Remaining days
-  // const days = Math.floor(ms / day);
   const days = pad(Math.floor(ms / day));
   // Remaining hours
-  // const hours = Math.floor((ms % day) / hour);
   const hours = pad(Math.floor((ms % day) / hour));
   // Remaining minutes
-  // const minutes = Math.floor(((ms % day) % hour) / minute);
   const minutes = pad(Math.floor(((ms % day) % hour) / minute));
   // Remaining seconds
-  // const seconds = Math.floor((((ms % day) % hour) % minute) / second);
   const seconds = pad(Math.floor((((ms % day) % hour) % minute) / second));
 
   return { days, hours, minutes, seconds };
