@@ -1,5 +1,6 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
+import Notiflix from 'notiflix';
 
 const refs = {
   onInput : document.querySelector('input'),
@@ -8,7 +9,6 @@ const refs = {
   minTime: document.querySelector('.value[data-minutes]'),
   secTime: document.querySelector('.value[data-seconds]'),
   startBtn: document.querySelector('button[data-start]'),
-  stopBtn: document.querySelector('button[data-stop]'),
 }; 
 
 refs.startBtn.setAttribute('disabled', '');
@@ -22,17 +22,16 @@ const options = {
     console.log(selectedDates[0]);
     if (Date.parse(selectedDates) >= Date.now()) {
       refs.startBtn.removeAttribute('disabled');
-    }
+    } else {
+      Notiflix.Notify.failure('Please choose a date in the future', {
+        timeout: 6000,
+      });
+    };
   },
 };
 
-
 refs.startBtn.addEventListener('click', () => { 
   timer.start();
-});
-
-refs.stopBtn.addEventListener('click', () => { 
-  timer.stop();
 });
 
 flatpickr("#datetime-picker", options);
@@ -42,15 +41,10 @@ const timer = {
   isActive: false,
   start() {
     if (this.isActive) {
-      return
+      return;
     }
+    this.isActive = true;
     const selectedDate = new Date(refs.onInput.value).getTime();
-    console.log(selectedDate);
-
-    if (selectedDate < Date.now()) {
-      window.alert("Please choose a date in the future");
-      console.log(selectedDate);
-    }
     
     this.intervalId = setInterval(() => {
       const endTime = Date.now();
@@ -66,10 +60,6 @@ const timer = {
       updatetime(time);
       
     }, 1000);
-  },
-  stop() {
-    clearInterval(this.intervalId);
-    this.isActive = false;
   },
 };
 
