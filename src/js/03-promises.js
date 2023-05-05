@@ -14,9 +14,10 @@ function onClick(evt) {
 
   isActive = true;
 
-  const delay = Number(form.elements.delay.value);
-  const step = form.elements.step.value;
-  const amount = form.elements.amount.value;
+  const formEvt = evt.currentTarget;
+  const delay = Number(formEvt.elements.delay.value);
+  const step = Number(formEvt.elements.step.value);
+  const amount = Number(formEvt.elements.amount.value);
   let promises = [];
  
   for (let i = 1; i <= amount; i += 1) {
