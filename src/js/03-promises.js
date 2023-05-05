@@ -14,7 +14,6 @@ function onClick(evt) {
 
   isActive = true;
 
-  const delay1 = form.elements.delay.value;
   const delay = Number(form.elements.delay.value);
   const step = form.elements.step.value;
   const amount = form.elements.amount.value;
