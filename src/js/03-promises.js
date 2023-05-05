@@ -33,7 +33,8 @@ function onClick(evt) {
     promises.push(promise);
   }
   Promise.all(promises).finally(() => { 
-  isActive = false;
+    isActive = false;
+    formEvt.reset();
 });
 }
 
