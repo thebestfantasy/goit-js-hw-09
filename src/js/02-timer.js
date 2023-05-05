@@ -19,8 +19,11 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
-    if (Date.parse(selectedDates) >= Date.now()) {
+      const startCountDate = Date.now();
+      const endCountDate = selectedDates[0].getTime();
+      let deltaTime = endCountDate - startCountDate;
+    
+    if (deltaTime > 0) {
       refs.startBtn.removeAttribute('disabled');
     } else {
       Notiflix.Notify.failure('Please choose a date in the future', {
@@ -38,22 +41,21 @@ flatpickr("#datetime-picker", options);
 
 const timer = {
   intervaId: null,
-  isActive: false,
   start() {
-    if (this.isActive) {
-      return;
-    }
-    this.isActive = true;
+    refs.onInput.setAttribute('disabled', ''),
+    refs.startBtn.setAttribute('disabled', '');
     const selectedDate = new Date(refs.onInput.value).getTime();
     
     this.intervalId = setInterval(() => {
       const endTime = Date.now();
-      const deltaTime = selectedDate - endTime;
+      let deltaTime = selectedDate - endTime;
       const time = convertMs(deltaTime);
 
 
       if (deltaTime <= 0) {
         clearInterval(this.intervalId);
+        refs.startBtn.removeAttribute('disabled');
+         refs.onInput.removeAttribute('disabled');
         return
       }
 

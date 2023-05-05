@@ -4,7 +4,6 @@ const form = document.querySelector('.form');
 form.addEventListener('submit', onClick);
 let isActive = false;
 
-
 function onClick(evt) {
   evt.preventDefault();
   
@@ -12,14 +11,19 @@ function onClick(evt) {
     return
   };
 
-  isActive = true;
-
   const formEvt = evt.currentTarget;
   const delay = Number(formEvt.elements.delay.value);
   const step = Number(formEvt.elements.step.value);
   const amount = Number(formEvt.elements.amount.value);
   let promises = [];
- 
+  let isValid = true;
+
+  if (delay < 0 || step < 0 || amount < 0) {
+    window.alert("Значення має бути більше 0");
+    isValid = false;
+    return
+  }
+  
   for (let i = 1; i <= amount; i += 1) {
     const promise = createPromise(i, delay + (i - 1) * step)
       .then(({ position, delay }) => {
@@ -32,6 +36,9 @@ function onClick(evt) {
       });
     promises.push(promise);
   }
+
+  isActive = true;
+
   Promise.all(promises).finally(() => { 
     isActive = false;
     formEvt.reset();
