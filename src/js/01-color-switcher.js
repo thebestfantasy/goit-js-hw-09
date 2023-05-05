@@ -6,7 +6,7 @@ const refs = {
 refs.stopBtn.setAttribute('disabled', '');
 refs.startBtn.addEventListener('click', clickStart);
 refs.stopBtn.addEventListener('click', clickStop);
-let intervaId;
+let intervaId = null;
 
 function getRandomHexColor() {
   return `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, 0)}`;

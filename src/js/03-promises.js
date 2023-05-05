@@ -13,10 +13,11 @@ function onClick(evt) {
   };
 
   isActive = true;
-  const formData = new FormData(form);
-  const delay = Number(formData.get('delay'));
-  const step = formData.get('step');
-  const amount = formData.get('amount');
+
+  const delay1 = form.elements.delay.value;
+  const delay = Number(form.elements.delay.value);
+  const step = form.elements.step.value;
+  const amount = form.elements.amount.value;
   let promises = [];
  
   for (let i = 1; i <= amount; i += 1) {
